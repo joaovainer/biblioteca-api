@@ -1,0 +1,33 @@
+### Listar empréstimos
+GET http://localhost:4000/emprestimos
+
+### Listar livros
+GET http://localhost:4000/livros
+
+
+### Adicionar livros 
+POST http://localhost:4000/livros
+Content-Type: application/json
+
+### Adicionar empréstimo 
+POST http://localhost:4000/emprestimos
+Content-Type: application/json
+
+
+### Atualizar devolução
+PUT http://localhost:4000/emprestimos
+Content-Type: application/json
+
+### Atualizar livro
+PUT http://localhost:4000/livros
+Content-Type: application/json
+
+  
+### Deletar empréstimo
+DELETE http://localhost:4000/emprestimos
+
+### Deletar livro
+DELETE http://localhost:4000/livros
+
+### Remover tudo
+DELETE http://localhost:4000/limpar
