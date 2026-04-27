@@ -32,19 +32,28 @@ public class EmprestimosController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Emprestimo emprestimo)
+    public async Task<IActionResult> Post([FromBody] EmprestimoDto dto)
     {
-        if (emprestimo.LivroId <= 0 || string.IsNullOrWhiteSpace(emprestimo.NomeUsuario))
-            return BadRequest();
+        if (dto.LivroId == null || dto.LivroId <= 0 || string.IsNullOrWhiteSpace(dto.NomeUsuario) || dto.DataEmprestimo == null)
+            return BadRequest("Dados obrigatórios ausentes ou inválidos.");
+
+        var emprestimo = new Emprestimo
+        {
+            LivroId = dto.LivroId.Value,
+            NomeUsuario = dto.NomeUsuario!,
+            DataEmprestimo = dto.DataEmprestimo.Value,
+            DataDevolucao = dto.DataDevolucao,
+            Status = StatusEmprestimo.Ativo
+        };
 
         try
         {
             var novoEmprestimo = await _repository.AddAsync(emprestimo);
             return CreatedAtAction(nameof(GetById), new { id = novoEmprestimo.Id }, novoEmprestimo);
         }
-        catch
+        catch (Exception ex)
         {
-            return BadRequest();
+            return BadRequest($"Erro ao criar empréstimo: {ex.Message}");
         }
     }
 

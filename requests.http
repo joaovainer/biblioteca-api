@@ -2,32 +2,18 @@
 @baseUrl = http://localhost:5000
 @contentType = application/json
 
-###
-### LIVROS
-###
-
-### GET - Listar todos os livros
-GET {{baseUrl}}/api/livros
 
 ### GET - Obter um livro específico
 GET {{baseUrl}}/api/livros/1
 
-### POST - Criar um novo livro
-POST {{baseUrl}}/api/livros
-Content-Type: {{contentType}}
-
-{
-  "titulo": "Clean Code",
-  "autor": "Robert C. Martin"
-}
 
 ### POST - Criar outro livro
 POST {{baseUrl}}/api/livros
 Content-Type: {{contentType}}
 
 {
-  "titulo": "Design Patterns",
-  "autor": "Gang of Four"
+  "titulo": "Clean Code (Edição Atualizada)",
+  "autor": "Robert C. Martin"
 }
 
 ### PUT - Atualizar um livro
@@ -40,7 +26,7 @@ Content-Type: {{contentType}}
 }
 
 ### DELETE - Remover um livro
-DELETE {{baseUrl}}/api/livros/1
+DELETE {{baseUrl}}/api/livros/3
 
 ###
 ### EMPRÉSTIMOS
@@ -48,9 +34,6 @@ DELETE {{baseUrl}}/api/livros/1
 
 ### GET - Listar todos os empréstimos
 GET {{baseUrl}}/api/emprestimos
-
-### GET - Obter um empréstimo específico
-GET {{baseUrl}}/api/emprestimos/1
 
 ### POST - Criar um novo empréstimo
 POST {{baseUrl}}/api/emprestimos
@@ -63,16 +46,6 @@ Content-Type: {{contentType}}
   "dataDevolucao": null
 }
 
-### POST - Criar outro empréstimo
-POST {{baseUrl}}/api/emprestimos
-Content-Type: {{contentType}}
-
-{
-  "livroId": 2,
-  "nomeUsuario": "Maria Santos",
-  "dataEmprestimo": "2026-04-25T15:45:00",
-  "dataDevolucao": null
-}
 
 ### PUT - Atualizar data de devolução
 PUT {{baseUrl}}/api/emprestimos/1
@@ -83,4 +56,5 @@ Content-Type: {{contentType}}
 }
 
 ### DELETE - Remover um empréstimo
-DELETE {{baseUrl}}/api/emprestimos/1
+DELETE {{baseUrl}}/api/emprestimos/2
+
