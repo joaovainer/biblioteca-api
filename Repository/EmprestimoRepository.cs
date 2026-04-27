@@ -21,7 +21,7 @@ public class EmprestimoRepository : IEmprestimoRepository
             {
                 e.Id,
                 e.LivroId,
-                NomeLivro = e.Livro!.Titulo,
+                NomeLivro = e.Livro != null ? e.Livro.Titulo : null,
                 e.NomeUsuario,
                 e.DataEmprestimo,
                 e.DataDevolucao
@@ -29,11 +29,21 @@ public class EmprestimoRepository : IEmprestimoRepository
             .ToListAsync();
     }
 
-    public async Task<Emprestimo?> GetByIdAsync(int id)
+    public async Task<object?> GetByIdAsync(int id)
     {
-        return await _context.Emprestimos
-            .Include(e => e.Livro)
-            .FirstOrDefaultAsync(e => e.Id == id);
+    return await _context.Emprestimos
+        .Include(e => e.Livro)
+        .Where(e => e.Id == id)
+        .Select(e => new
+        {
+            e.Id,
+            e.LivroId,
+            NomeLivro = e.Livro != null ? e.Livro.Titulo : null,
+            e.NomeUsuario,
+            e.DataEmprestimo,
+            e.DataDevolucao
+        })
+        .FirstOrDefaultAsync();
     }
 
     public async Task<Emprestimo> AddAsync(Emprestimo emprestimo)

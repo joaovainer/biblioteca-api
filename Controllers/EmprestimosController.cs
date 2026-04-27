@@ -35,7 +35,7 @@ public class EmprestimosController : ControllerBase
     public async Task<IActionResult> Post([FromBody] EmprestimoDto dto)
     {
         if (dto.LivroId == null || dto.LivroId <= 0 || string.IsNullOrWhiteSpace(dto.NomeUsuario) || dto.DataEmprestimo == null)
-            return BadRequest("Dados obrigatórios ausentes ou inválidos.");
+        return BadRequest("Dados obrigatórios ausentes ou inválidos.");
 
         var emprestimo = new Emprestimo
         {
@@ -46,16 +46,12 @@ public class EmprestimosController : ControllerBase
             Status = StatusEmprestimo.Ativo
         };
 
-        try
-        {
-            var novoEmprestimo = await _repository.AddAsync(emprestimo);
-            return CreatedAtAction(nameof(GetById), new { id = novoEmprestimo.Id }, novoEmprestimo);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest($"Erro ao criar empréstimo: {ex.Message}");
-        }
-    }
+        await _repository.AddAsync(emprestimo);
+
+        var resultado = await _repository.GetByIdAsync(emprestimo.Id);
+
+        return CreatedAtAction(nameof(GetById), new { id = emprestimo.Id }, resultado);
+}
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] Emprestimo emprestimo)
