@@ -1,33 +1,86 @@
-### Listar empréstimos
-GET http://localhost:4000/emprestimos
+### Variáveis
+@baseUrl = http://localhost:5000
+@contentType = application/json
 
-### Listar livros
-GET http://localhost:4000/livros
+###
+### LIVROS
+###
 
+### GET - Listar todos os livros
+GET {{baseUrl}}/api/livros
 
-### Adicionar livros 
-POST http://localhost:4000/livros
-Content-Type: application/json
+### GET - Obter um livro específico
+GET {{baseUrl}}/api/livros/1
 
-### Adicionar empréstimo 
-POST http://localhost:4000/emprestimos
-Content-Type: application/json
+### POST - Criar um novo livro
+POST {{baseUrl}}/api/livros
+Content-Type: {{contentType}}
 
+{
+  "titulo": "Clean Code",
+  "autor": "Robert C. Martin"
+}
 
-### Atualizar devolução
-PUT http://localhost:4000/emprestimos
-Content-Type: application/json
+### POST - Criar outro livro
+POST {{baseUrl}}/api/livros
+Content-Type: {{contentType}}
 
-### Atualizar livro
-PUT http://localhost:4000/livros
-Content-Type: application/json
+{
+  "titulo": "Design Patterns",
+  "autor": "Gang of Four"
+}
 
-  
-### Deletar empréstimo
-DELETE http://localhost:4000/emprestimos
+### PUT - Atualizar um livro
+PUT {{baseUrl}}/api/livros/1
+Content-Type: {{contentType}}
 
-### Deletar livro
-DELETE http://localhost:4000/livros
+{
+  "titulo": "Clean Code - Edição Atualizada",
+  "autor": "Robert C. Martin"
+}
 
-### Remover tudo
-DELETE http://localhost:4000/limpar
+### DELETE - Remover um livro
+DELETE {{baseUrl}}/api/livros/1
+
+###
+### EMPRÉSTIMOS
+###
+
+### GET - Listar todos os empréstimos
+GET {{baseUrl}}/api/emprestimos
+
+### GET - Obter um empréstimo específico
+GET {{baseUrl}}/api/emprestimos/1
+
+### POST - Criar um novo empréstimo
+POST {{baseUrl}}/api/emprestimos
+Content-Type: {{contentType}}
+
+{
+  "livroId": 1,
+  "nomeUsuario": "João Silva",
+  "dataEmprestimo": "2026-04-26T10:30:00",
+  "dataDevolucao": null
+}
+
+### POST - Criar outro empréstimo
+POST {{baseUrl}}/api/emprestimos
+Content-Type: {{contentType}}
+
+{
+  "livroId": 2,
+  "nomeUsuario": "Maria Santos",
+  "dataEmprestimo": "2026-04-25T15:45:00",
+  "dataDevolucao": null
+}
+
+### PUT - Atualizar data de devolução
+PUT {{baseUrl}}/api/emprestimos/1
+Content-Type: {{contentType}}
+
+{
+  "dataDevolucao": "2026-05-26T14:00:00"
+}
+
+### DELETE - Remover um empréstimo
+DELETE {{baseUrl}}/api/emprestimos/1
