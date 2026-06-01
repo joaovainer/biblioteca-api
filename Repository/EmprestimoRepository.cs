@@ -17,6 +17,7 @@ public class EmprestimoRepository : IEmprestimoRepository
     {
         return await _context.Emprestimos
             .Include(e => e.Livro)
+            .OrderByDescending(e => e.Id)
             .Select(e => new
             {
                 e.Id,
@@ -24,26 +25,28 @@ public class EmprestimoRepository : IEmprestimoRepository
                 NomeLivro = e.Livro != null ? e.Livro.Titulo : null,
                 e.NomeUsuario,
                 e.DataEmprestimo,
-                e.DataDevolucao
+                e.DataDevolucao,
+                Status = e.Status.ToString()
             })
             .ToListAsync();
     }
 
     public async Task<object?> GetByIdAsync(int id)
     {
-    return await _context.Emprestimos
-        .Include(e => e.Livro)
-        .Where(e => e.Id == id)
-        .Select(e => new
-        {
-            e.Id,
-            e.LivroId,
-            NomeLivro = e.Livro != null ? e.Livro.Titulo : null,
-            e.NomeUsuario,
-            e.DataEmprestimo,
-            e.DataDevolucao
-        })
-        .FirstOrDefaultAsync();
+        return await _context.Emprestimos
+            .Include(e => e.Livro)
+            .Where(e => e.Id == id)
+            .Select(e => new
+            {
+                e.Id,
+                e.LivroId,
+                NomeLivro = e.Livro != null ? e.Livro.Titulo : null,
+                e.NomeUsuario,
+                e.DataEmprestimo,
+                e.DataDevolucao,
+                Status = e.Status.ToString()
+            })
+            .FirstOrDefaultAsync();
     }
 
     public async Task<Emprestimo> AddAsync(Emprestimo emprestimo)
@@ -64,6 +67,18 @@ public class EmprestimoRepository : IEmprestimoRepository
             existente.Status = StatusEmprestimo.Devolvido;
 
         _context.Emprestimos.Update(existente);
+        await _context.SaveChangesAsync();
+        return existente;
+    }
+
+    public async Task<Emprestimo?> DevolverAsync(int id)
+    {
+        var existente = await _context.Emprestimos.FindAsync(id);
+        if (existente == null)
+            return null;
+
+        existente.DataDevolucao = DateTime.UtcNow;
+        existente.Status = StatusEmprestimo.Devolvido;
         await _context.SaveChangesAsync();
         return existente;
     }

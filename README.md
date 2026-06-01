@@ -1,41 +1,57 @@
-# Biblioteca API - C# ASP.NET
+# Biblioteca — Web API + React
 
-Sistema de gerenciamento de biblioteca com registro de livros e empréstimos.
+Sistema de biblioteca com cadastro de livros, registro de empréstimos e autenticação JWT. Backend em **C# / ASP.NET Core 9** (EF Core + SQLite, Repository Pattern). Frontend em **React + Vite**.
+
+## Integrantes da equipe
+
+- Gabriel Leineker Wolff — 29563089
+- João Emanuel Vainer de Paula — 39023532
+- Lucas Gonçalves de Lima — 38107899
+- Eduardo Luiz Lima Correia — 38746778
 
 ## Tecnologias
 
-- ASP.NET Core 8.0
-- SQLite
-- Entity Framework Core
-- Repository Pattern
+**Backend:** .NET 9 · EF Core 9 · SQLite · JWT Bearer · BCrypt · DotNetEnv
+**Frontend:** React 19 · Vite · React Router · Fetch API · CSS puro
 
-## Execução
+## Como rodar
 
+Pré-requisitos: **.NET 9** e **Node 20+**.
+
+**Backend** (porta 5000):
 ```bash
-dotnet restore
-dotnet run
+cp .env.example .env
+dotnet run --urls=http://localhost:5000
 ```
 
-Servidor rodará em `http://localhost:5000`
+**Frontend** (porta 5173, em outro terminal):
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Abra `http://localhost:5173`, cadastre um usuário e use o sistema. O banco SQLite e a tabela `Usuarios` são criados na primeira execução.
 
 ## Endpoints
 
-### Livros
+Tudo abaixo de `/api/livros` e `/api/emprestimos` exige `Authorization: Bearer <token>`. Exemplos prontos em [`requests.http`](./requests.http).
 
-- `GET /api/livros` - Listar todos
-- `GET /api/livros/{id}` - Obter por ID
-- `POST /api/livros` - Criar novo
-- `PUT /api/livros/{id}` - Atualizar
-- `DELETE /api/livros/{id}` - Remover
+| Método | Rota | Auth |
+|---|---|---|
+| POST | `/api/auth/register` | ❌ |
+| POST | `/api/auth/login` | ❌ |
+| GET | `/api/auth/me` | ✅ |
+| GET POST | `/api/livros` | ✅ |
+| GET PUT DELETE | `/api/livros/{id}` | ✅ |
+| GET POST | `/api/emprestimos` | ✅ |
+| GET PUT DELETE | `/api/emprestimos/{id}` | ✅ |
+| **PATCH** | `/api/emprestimos/{id}/devolver` | ✅ |
 
-### Empréstimos
+## Autenticação JWT
 
-- `GET /api/emprestimos` - Listar todos
-- `GET /api/emprestimos/{id}` - Obter por ID
-- `POST /api/emprestimos` - Criar novo
-- `PUT /api/emprestimos/{id}` - Atualizar
-- `DELETE /api/emprestimos/{id}` - Remover
+`POST /api/auth/login` valida a senha com **BCrypt** e devolve um JWT assinado em **HMAC-SHA256** com a chave definida em `.env` (`Jwt__Key`). O token carrega `sub` (id), `email`, `name` e `exp` (8h).
 
-## Importar no Postman
+O frontend guarda o token em `localStorage` e o `apiFetch` (`frontend/src/api/client.js`) injeta `Authorization: Bearer <token>` em toda requisição. O backend valida assinatura, issuer, audience e expiração via middleware `AddJwtBearer`; controllers protegidos têm `[Authorize]`.
 
-Cole as requisições do arquivo `requests.http` no Postman para testar todos os endpoints.
+**Testar via Postman:** faça `POST /api/auth/login`, copie o `token`, e use `Authorization: Bearer <token>` nas demais requests. Confirme com `GET /api/auth/me`.

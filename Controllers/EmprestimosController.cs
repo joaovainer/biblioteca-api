@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BibliotecaAPI.Models;
 using BibliotecaAPI.Repository;
@@ -5,6 +6,7 @@ using BibliotecaAPI.Repository;
 namespace BibliotecaAPI.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class EmprestimosController : ControllerBase
 {
@@ -35,7 +37,7 @@ public class EmprestimosController : ControllerBase
     public async Task<IActionResult> Post([FromBody] EmprestimoDto dto)
     {
         if (dto.LivroId == null || dto.LivroId <= 0 || string.IsNullOrWhiteSpace(dto.NomeUsuario) || dto.DataEmprestimo == null)
-        return BadRequest("Dados obrigatórios ausentes ou inválidos.");
+            return BadRequest(new { mensagem = "Dados obrigatórios ausentes ou inválidos." });
 
         var emprestimo = new Emprestimo
         {
@@ -43,28 +45,39 @@ public class EmprestimosController : ControllerBase
             NomeUsuario = dto.NomeUsuario!,
             DataEmprestimo = dto.DataEmprestimo.Value,
             DataDevolucao = dto.DataDevolucao,
-            Status = StatusEmprestimo.Ativo
+            Status = dto.DataDevolucao != null ? StatusEmprestimo.Devolvido : StatusEmprestimo.Ativo
         };
 
         await _repository.AddAsync(emprestimo);
-
         var resultado = await _repository.GetByIdAsync(emprestimo.Id);
 
         return CreatedAtAction(nameof(GetById), new { id = emprestimo.Id }, resultado);
-}
+    }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] Emprestimo emprestimo)
     {
         try
         {
-            var emprestimoAtualizado = await _repository.UpdateAsync(id, emprestimo);
-            return Ok(emprestimoAtualizado);
+            await _repository.UpdateAsync(id, emprestimo);
+            var resultado = await _repository.GetByIdAsync(id);
+            return Ok(resultado);
         }
         catch (KeyNotFoundException)
         {
             return NotFound();
         }
+    }
+
+    [HttpPatch("{id}/devolver")]
+    public async Task<IActionResult> Devolver(int id)
+    {
+        var atualizado = await _repository.DevolverAsync(id);
+        if (atualizado == null)
+            return NotFound();
+
+        var resultado = await _repository.GetByIdAsync(id);
+        return Ok(resultado);
     }
 
     [HttpDelete("{id}")]

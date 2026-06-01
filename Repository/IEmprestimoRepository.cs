@@ -8,5 +8,6 @@ public interface IEmprestimoRepository
     Task<object?> GetByIdAsync(int id);
     Task<Emprestimo> AddAsync(Emprestimo emprestimo);
     Task<Emprestimo> UpdateAsync(int id, Emprestimo emprestimo);
+    Task<Emprestimo?> DevolverAsync(int id);
     Task<bool> DeleteAsync(int id);
 }

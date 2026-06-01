@@ -1,60 +1,111 @@
 ### Variáveis
 @baseUrl = http://localhost:5000
 @contentType = application/json
+@token = COLE_O_TOKEN_AQUI_DEPOIS_DO_LOGIN
+
+
+### AUTH ##############################################
+
+### POST - Registrar novo usuário
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "nome": "Gabriel",
+  "email": "gabriel@biblioteca.com",
+  "senha": "senha123"
+}
+
+
+### POST - Login (copiar o token da resposta para @token)
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "gabriel@biblioteca.com",
+  "senha": "senha123"
+}
+
+
+### GET - Dados do usuário autenticado
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{token}}
+
+
+### LIVROS ############################################
+
+### GET - Listar todos os livros (protegido)
+GET {{baseUrl}}/api/livros
+Authorization: Bearer {{token}}
 
 
 ### GET - Obter um livro específico
 GET {{baseUrl}}/api/livros/1
+Authorization: Bearer {{token}}
 
 
-### POST - Criar outro livro
+### POST - Criar livro
 POST {{baseUrl}}/api/livros
 Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
 
 {
-  "titulo": "Clean Code (Edição Atualizada)",
+  "titulo": "Clean Code",
   "autor": "Robert C. Martin"
 }
 
-### PUT - Atualizar um livro
+
+### PUT - Atualizar livro
 PUT {{baseUrl}}/api/livros/1
 Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
 
 {
   "titulo": "Clean Code - Edição Atualizada",
   "autor": "Robert C. Martin"
 }
 
-### DELETE - Remover um livro
-DELETE {{baseUrl}}/api/livros/3
 
-###
-### EMPRÉSTIMOS
-###
+### DELETE - Remover livro
+DELETE {{baseUrl}}/api/livros/1
+Authorization: Bearer {{token}}
 
-### GET - Listar todos os empréstimos
+
+### EMPRÉSTIMOS #######################################
+
+### GET - Listar empréstimos
 GET {{baseUrl}}/api/emprestimos
+Authorization: Bearer {{token}}
 
-### POST - Criar um novo empréstimo
+
+### POST - Criar empréstimo
 POST {{baseUrl}}/api/emprestimos
 Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
 
 {
   "livroId": 1,
   "nomeUsuario": "João Silva",
-  "dataEmprestimo": "2026-04-26T10:30:00",
+  "dataEmprestimo": "2026-06-01T10:30:00",
   "dataDevolucao": null
 }
 
 
-### PUT - Atualizar data de devolução
+### PATCH - Devolver empréstimo (atualização parcial)
+PATCH {{baseUrl}}/api/emprestimos/1/devolver
+Authorization: Bearer {{token}}
+
+
+### PUT - Atualizar empréstimo
 PUT {{baseUrl}}/api/emprestimos/1
 Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
 
 {
-  "dataDevolucao": "2026-05-26T14:00:00"
+  "dataDevolucao": "2026-06-15T14:00:00"
 }
 
-### DELETE - Remover um empréstimo
-DELETE {{baseUrl}}/api/emprestimos/2
 
+### DELETE - Remover empréstimo
+DELETE {{baseUrl}}/api/emprestimos/1
+Authorization: Bearer {{token}}
